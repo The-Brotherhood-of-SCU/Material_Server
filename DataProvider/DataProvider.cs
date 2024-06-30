@@ -1,5 +1,6 @@
 ﻿namespace DataProvider;
 
+[Obsolete]
 public interface DataProvider
 {
     /// <summary>
@@ -24,4 +25,5 @@ public record FileDetails
     public int file_size { get; set; }
     public long file_pointer { get; set; }
     public long upload_time { get; set; }
+    public string uploader {  get; set; }
 }

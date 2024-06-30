@@ -1,13 +1,14 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataProvider;
 
-public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
+public class SQLiteBasedDataProvider : SQLiteDataProvider
 {
     public SQLiteBasedDataProvider() :base("data.db"){ 
         ExecuteSQL(Str.SQL_Build_File_Table);
@@ -56,27 +57,57 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             {
                 break;
             }
-            var detail=new FileDetails();
-            detail.file_pointer =(long)reader[Str.File_Pointer];
-            detail.file_name = (string)reader[Str.File_Name];
-            detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
-            detail.kcm = (string)reader[Str.Kcm];
-            detail.kch = (string)reader[Str.Kch];
-            detail.upload_time = (long)reader[Str.Timestamp];
-            var rating_number = (long)reader[Str.Rating_Number];
-            if (rating_number == 0)
-            {
-                detail.rating = -1;
-            }
-            else
-            {
-                detail.rating = (float)((double)reader[Str.Total_Rating] / rating_number);
-            }
-            detail.rating_number = (long)reader[Str.Rating_Number];
-            detail.details=(string)reader[Str.Details];
-
-            yield return detail;
+            yield return GetFileDetailByReader(reader);
             count++;
+        }
+    }
+    private FileDetails GetFileDetailByReader(SQLiteDataReader reader)
+    {
+        var detail = new FileDetails();
+        detail.file_pointer = (long)reader[Str.File_Pointer];
+        detail.file_name = (string)reader[Str.File_Name];
+        detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
+        detail.kcm = (string)reader[Str.Kcm];
+        detail.kch = (string)reader[Str.Kch];
+        detail.upload_time = (long)reader[Str.Timestamp];
+        var rating_number = (long)reader[Str.Rating_Number];
+        if (rating_number == 0)
+        {
+            detail.rating = -1;
+        }
+        else
+        {
+            detail.rating = (float)((double)reader[Str.Total_Rating] / rating_number);
+        }
+        detail.rating_number = (long)reader[Str.Rating_Number];
+        detail.details = (string)reader[Str.Details];
+        return detail;
+    }
+    public FileDetails GetDetailsByFilePointer(long filePointer)
+    {
+        var detail = new FileDetails();
+        var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
+        var command=BuildSQL(sql).Add($"@{Str.File_Pointer}",filePointer);
+        var reader=ReadOneLine(command);
+        return GetFileDetailByReader(reader);
+    }
+    public IEnumerable<long> GetFilesByUploader(string uploader) {
+        var sql = $"SELECT {Str.File_Pointer} FROM {Str.FILE_Table} " +
+            $"WHERE {Str.Uploader}==@{Str.Uploader}";
+        var command=BuildSQL(sql).Add($"@{Str.Uploader}",uploader);
+        var reader=ReadLine(command);
+        while (reader.Read()) { 
+            yield return (long)reader[Str.File_Pointer];
+        }
+    }
+    public IEnumerable<FileDetails> GetFileDetailsByUploader(string uploader)
+    {
+        var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.Uploader}==@{Str.Uploader}";
+        var command=BuildSQL(sql).Add($"@{uploader}",uploader);
+        var reader=ReadLine(command);
+        while (reader.Read())
+        {
+            yield return GetFileDetailByReader(reader);
         }
     }
     public (byte[], string) GetFile(long filePointer)
@@ -86,11 +117,11 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         var reader=ReadOneLine(command);
         return ((byte[])reader[Str.File_Blob], (string)reader[Str.File_Name]);
     }
-    public void Upload(string kcm, string kch, string fileName, string details, byte[] file)
+    public void Upload(string kcm, string kch, string fileName, string details, byte[] file,string uploader)
     {
         var sql = $"INSERT INTO {Str.FILE_Table} " +
-            $"({Str.File_Name},{Str.Timestamp},{Str.Kcm},{Str.Kch},{Str.File_Blob},{Str.Details}) VALUES " +
-            $"(@{Str.File_Name},@{Str.Timestamp},@{Str.Kcm},@{Str.Kch},@{Str.File_Blob},@{Str.Details})";
+            $"({Str.File_Name},{Str.Timestamp},{Str.Kcm},{Str.Kch},{Str.File_Blob},{Str.Details},{Str.Uploader}) VALUES " +
+            $"(@{Str.File_Name},@{Str.Timestamp},@{Str.Kcm},@{Str.Kch},@{Str.File_Blob},@{Str.Details},@{Str.Uploader})";
         var command = BuildSQL(sql)
             .Add($"@{Str.File_Name}",fileName)
             .Add($"@{Str.Timestamp}", CurrentTime)
@@ -98,6 +129,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             .Add($"@{Str.Kch}", kch)
             .Add($"@{Str.File_Blob}", file)
             .Add($"@{Str.Details}",details)
+            .Add($"@{Str.Uploader}",uploader)
             ;
 
         ExecuteSQL(command);
@@ -120,6 +152,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         public const string Total_Rating = "Rating_Total";
         public const string Rating_Number = "Rating_Number";
         public const string Timestamp = "Timestamp";
+        public const string Uploader = "Uploader";
         public const string SQL_Build_File_Table = 
             $"CREATE TABLE IF NOT EXISTS {FILE_Table}(" +
                 $"{File_Pointer} INTEGER PRIMARY KEY AUTOINCREMENT ," +
@@ -130,8 +163,8 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
                 $"{File_Blob} BLOB ," +
                 $"{Details} TEXT DEFAULT ''," +
                 $"{Total_Rating} REAL DEFAULT 0.0," +
-                $"{Rating_Number} INTEGER DEFAULT 0" +
+                $"{Rating_Number} INTEGER DEFAULT 0 " +
+                $"{Uploader} TEXT DEFAULT 'unknown'" +
             $")";
-
     }
 }

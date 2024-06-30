@@ -17,11 +17,12 @@
 用于上传文件
 
 POST主体为表单
-1. kcm:string
-2. kch:string
-3. details:string
-4. file_name:string
+1. kcm:string 课程名
+2. kch:string 课程号
+3. details:string 详细信息
+4. file_name:string 文件名
 5. file:文件
+6. uploader:string 上传者
 
 ### /rate?file_pointer=...&rating=...
 用于打分
@@ -44,7 +45,8 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
         "file_pointer":long,///文件指针
         "upload_time":long,//该文件的上传时间
         "rating":float,//打分，五分制；若为负数，说明该值无效
-        "rating_number":int//有多少人打分
+        "rating_number":int,//有多少人打分
+        "uploader":string//上传者
     },
     ...
 ]
@@ -52,4 +54,8 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 
 ### /get_file/[file_pointer]
 返回文件指针对应的文件
+
+
+### /user/[uploader]/files
+返回一个列表，包含了这个用户上传的文件对应的文件详情(返回类型与/search相同)
 
