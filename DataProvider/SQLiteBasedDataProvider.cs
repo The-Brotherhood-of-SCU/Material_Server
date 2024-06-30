@@ -12,6 +12,28 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
     public SQLiteBasedDataProvider() :base("data.db"){ 
         ExecuteSQL(Str.SQL_Build_File_Table);
     }
+    public void Rate(long filePointer,float rating)
+    {
+        var sql = $"SELECT {Str.Total_Rating},{Str.Rating_Number} FROM {Str.FILE_Table} " +
+            $"WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
+        var command = BuildSQL(sql).Add($"@{Str.File_Pointer}",filePointer);
+        var reader=ReadOneLine(command);
+        double totalRating = (double)reader[Str.Total_Rating];
+        totalRating += rating;
+        long rating_number=(long)reader[Str.Rating_Number];
+        rating_number++;
+
+        var sql2 = $"UPDATE {Str.FILE_Table} " +
+            $"SET {Str.Total_Rating}=@{Str.Total_Rating},{Str.Rating_Number}=@{Str.Rating_Number} " +
+            $"WHERE {Str.File_Pointer}=@{Str.File_Pointer}";
+        var command2 = BuildSQL(sql2)
+            .Add($"@{Str.Total_Rating}",totalRating)
+            .Add($"@{Str.Rating_Number}",rating_number)
+            .Add($"@{Str.File_Pointer}",filePointer)
+            ;
+        ExecuteSQL(command2);
+        throw new NotImplementedException();
+    }
     /// <summary>
     /// 返回找到的50个
     /// </summary>
@@ -41,7 +63,17 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
             detail.kcm = (string)reader[Str.Kcm];
             detail.kch = (string)reader[Str.Kch];
-            detail.timestamp = (long)reader[Str.Timestamp];
+            detail.upload_time = (long)reader[Str.Timestamp];
+            if ((int)reader[Str.Rating_Number]==0)
+            {
+                detail.rating = -1;
+            }
+            else
+            {
+                detail.rating = ((float)reader[Str.Total_Rating] / (int)reader[Str.Rating_Number]);
+            }
+            detail.rating_number = (int)reader[Str.Rating_Number];
+            detail.details=(string)reader[Str.Details];
 
             yield return detail;
             count++;
@@ -54,17 +86,18 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         var reader=ReadOneLine(command);
         return (byte[])reader[Str.File_Blob];
     }
-    public void Upload(string kcm, string kch, string fileName, byte[] file)
+    public void Upload(string kcm, string kch, string fileName, string details, byte[] file)
     {
         var sql = $"INSERT INTO {Str.FILE_Table} " +
-            $"({Str.File_Name},{Str.Timestamp},{Str.Kcm},{Str.Kch},{Str.File_Blob}) VALUES " +
-            $"(@{Str.File_Name},@{Str.Timestamp},@{Str.Kcm},@{Str.Kch},@{Str.File_Blob})";
+            $"({Str.File_Name},{Str.Timestamp},{Str.Kcm},{Str.Kch},{Str.File_Blob},{Str.Details}) VALUES " +
+            $"(@{Str.File_Name},@{Str.Timestamp},@{Str.Kcm},@{Str.Kch},@{Str.File_Blob},@{Str.Details})";
         var command = BuildSQL(sql)
             .Add($"@{Str.File_Name}",fileName)
             .Add($"@{Str.Timestamp}", CurrentTime)
             .Add($"@{Str.Kcm}", kcm)
             .Add($"@{Str.Kch}", kch)
             .Add($"@{Str.File_Blob}", file)
+            .Add($"@{Str.Details}",details)
             ;
 
         ExecuteSQL(command);
@@ -81,9 +114,11 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         public const string File_Pointer = "File_Pointer";
         public const string Kch = "kch";
         public const string Kcm = "kcm";
+        public const string Details = "Details";
         public const string File_Name = "File_Name";
         public const string File_Blob = "File_Bolb";
-        public const string Rating = "Rating";
+        public const string Total_Rating = "Rating";
+        public const string Rating_Number = "Rating_Number";
         public const string Timestamp = "Timestamp";
         public const string SQL_Build_File_Table = 
             $"CREATE TABLE IF NOT EXISTS {FILE_Table}(" +
@@ -93,7 +128,9 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
                 $"{Kcm} TEXT ," +
                 $"{Kch} TEXT ," +
                 $"{File_Blob} BLOB ," +
-                $"{Rating} REAL " +
+                $"{Details} TEXT," +
+                $"{Total_Rating} REAL " +
+                $"{Rating_Number} INTEGER" +
             $")";
 
     }
