@@ -27,3 +27,11 @@ public record FileDetail
     public long upload_time { get; set; }
     public string uploader {  get; set; }
 }
+public record CommentDetail
+{
+    public string account { get; set; }
+    public long file_pointer {  get; set; }
+    public long timestamp {  get; set; }
+    public string text {  get; set; }
+    public float rating {  set; get; }
+}

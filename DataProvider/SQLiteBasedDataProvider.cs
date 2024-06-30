@@ -181,8 +181,8 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             $"CREATE TABLE IF NOT EXISTS {Comment_Table}(" +
                 $"{Account} TEXT," +
                 $"{File_Pointer} INTEGER," +
-                $"{Timestamp} TEXT," +
-                $"{Text} TEXT" +
+                $"{Timestamp} INTEGER," +
+                $"{Text} TEXT," +
                 $"{Rating} REAL" +
             $")";
     }
@@ -199,6 +199,35 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             .Add($"@{Str2.Rating}", rating)
             ;
         ExecuteSQL(command);
+    }
+    private CommentDetail GetCommentDetailByReader(SQLiteDataReader reader)
+    {
+        CommentDetail commentDetail = new CommentDetail();
+        commentDetail.account =(string) reader[Str2.Account];
+        commentDetail.text =(string) reader[Str2.Text];
+        commentDetail.timestamp =(long) reader[Str2.Timestamp];
+        commentDetail.file_pointer = (long)reader[Str2.File_Pointer];
+        commentDetail.rating=(float)(double)reader[Str2.Rating];
+        return commentDetail;
+    }
+    public IEnumerable<CommentDetail> GetCommentsByFilePointer(long filePointer)
+    {
+        var sql = $"SELECT * FROM {Str2.Comment_Table} WHERE {Str2.File_Pointer}=={filePointer}";
+        var reader = ReadLine(sql);
+        while (reader.Read())
+        {
+            yield return GetCommentDetailByReader(reader);
+        }
+    }
+    public IEnumerable<CommentDetail> GetCommentsByUser(string account)
+    {
+        var sql = $"SELECT * FROM {Str2.Comment_Table} WHERE {Str2.Account}==@{Str2.Account}";
+        var command = BuildSQL(sql).Add($"@{Str2.Account}",account);
+        var reader = ReadLine(command);
+        while (reader.Read())
+        {
+            yield return GetCommentDetailByReader(reader);
+        }
     }
     
 }

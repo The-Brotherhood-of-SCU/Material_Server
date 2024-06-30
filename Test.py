@@ -61,3 +61,22 @@ response=requests.get(base_url+"/get_file/"+str(entry["file_pointer"]))
 
 #print(response.text)
 
+line("comment")
+
+data={
+    "account":"123",
+    "file_pointer":0,
+    "text":"goood",
+    "rating":3
+}
+reponse=requests.post(base_url+"/comment",data=data)
+
+line("get comment by file ptr")
+r=requests.get(base_url+"/comment/0")
+print(r.content)
+
+
+line("get comment by user name")
+r=requests.get(base_url+"/user/123/comments")
+print(r.content)
+

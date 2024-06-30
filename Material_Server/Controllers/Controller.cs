@@ -18,13 +18,18 @@ public class ServerController : ControllerBase
         return result;
     }
 
-    [HttpGet("user/{account}/files/")]
+    [HttpGet("user/{account}/files")]
     public IEnumerable<FileDetail>? GetFilesByUploader(string account)
     {
         var result = Assets.DataProvider.GetFileDetailsByUploader(account);
         return result;
     }
-    [HttpGet("get_file/{file_pointer}")]
+    [HttpGet("user/{account}/comments")]
+    public IEnumerable<CommentDetail> GetCommentsByAccount(string account) {
+        return Assets.DataProvider.GetCommentsByUser(account);
+    }
+
+    [HttpGet("file/{file_pointer}")]
     public FileResult GetFile(long file_pointer)
     {
         var (file,fileName) = Assets.DataProvider.GetFile(file_pointer);
@@ -48,6 +53,19 @@ public class ServerController : ControllerBase
         Assets.DataProvider.Rate(file_pointer, rating);
         return Results.Ok();
     }
+
+    [HttpPost("comment")]
+    public IResult Comment([FromForm] CommentData commentData)
+    {
+        Assets.DataProvider.Comment(commentData.account, commentData.file_pointer, commentData.text, commentData.rating); ;
+        return Results.Ok();
+    }
+
+    [HttpGet("/comment/{filePointer}")]
+    public IEnumerable<CommentDetail> GetCommentsByFilePointer(long filePointer)
+    {
+        return Assets.DataProvider.GetCommentsByFilePointer(filePointer);
+    }
 }
 public class UploadData
 {
@@ -57,4 +75,11 @@ public class UploadData
     public string file_name { get; set; }
     public string uploader {  get; set; }
     public IFormFile file { get; set; } // 用于接收文件
+}
+public class CommentData
+{
+    public string account {  get; set; }
+    public long file_pointer { get; set; }
+    public string text {  get; set; }
+    public float rating {  get; set; }
 }

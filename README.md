@@ -29,6 +29,18 @@ POST主体为表单
 
 url参数有两个，file_pointer是文件指针（long），rating是打分（5分制）
 
+### /comment
+在POST的BODY中使用json传参
+```json
+{
+    "account":string,//账号
+    "file_pointer":long,//评论的这个文件对应的文件指针
+    "text":string,//评论的内容
+    "rating":float//打分，五分制
+}
+```
+评论
+
 ## GET
 
 ### /search/[keyword]
@@ -52,10 +64,28 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 ]
 ```
 
-### /get_file/[file_pointer]
+### /file/[file_pointer]
 返回文件指针对应的文件
 
 
 ### /user/[uploader]/files
 返回一个列表，包含了这个用户上传的文件对应的文件详情(返回类型与  /search  相同)
 
+### /user/[user]/comments
+获取某个用户的全部评论，格式为json
+```json
+[
+    {
+        "account":string,
+        "file_pointer":long,
+        "timestamp":long,
+        "text":string,
+        "rating":float,
+    },
+    ...
+]
+```
+
+
+### /comment/[file_pointer]
+获取某个文件对应的全部评论，格式与`/user/[user]/comments`api相同
