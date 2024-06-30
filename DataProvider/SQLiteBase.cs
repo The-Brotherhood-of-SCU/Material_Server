@@ -35,18 +35,18 @@ public class SQLiteDataProvider
     {
 
     }
-    protected void ExecuteSQL(string sql)
+    protected Task ExecuteSQL(string sql)
     {
         var command = new SQLiteCommand(sql, dbConn);
-        ExecuteSQL(command);
+        return ExecuteSQL(command);
 
 
     }
-    protected void ExecuteSQL(SQLiteCommand command)
+    protected async Task ExecuteSQL(SQLiteCommand command)
     {
         try
         {
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
         catch (Exception e)
         {
@@ -54,8 +54,8 @@ public class SQLiteDataProvider
         }
 
     }
-    protected void ExecuteSQL(_builder builder) {
-        ExecuteSQL(builder.Command);
+    protected Task ExecuteSQL(_builder builder) {
+        return ExecuteSQL(builder.Command);
     }
     protected SQLiteDataReader ReadLine(string sql)
     {
@@ -70,6 +70,22 @@ public class SQLiteDataProvider
     protected SQLiteDataReader ReadLine(_builder builder)
     {
         return ReadLine(builder.Command);
+    }
+
+
+    protected Task<System.Data.Common.DbDataReader> ReadLineAsync(string sql)
+    {
+        SQLiteCommand command = new SQLiteCommand(sql, dbConn);
+        return ReadLineAsync(command);
+    }
+
+    protected Task<System.Data.Common.DbDataReader>  ReadLineAsync(SQLiteCommand command)
+    {
+        return command.ExecuteReaderAsync();
+    }
+    protected Task<System.Data.Common.DbDataReader> ReadLineAsync(_builder builder)
+    {
+        return ReadLineAsync(builder.Command);
     }
 
     protected SQLiteDataReader ReadOneLine(string sql)
