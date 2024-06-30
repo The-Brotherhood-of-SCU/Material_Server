@@ -6,7 +6,7 @@ var provider = new SQLiteBasedDataProvider();
 
 //provider.RemoveAll();
 
-provider.Upload("english","114514","123","??",Encoding.UTF8.GetBytes("🤭黑黑黑"));
+provider.Upload("english","114514","123","??",Encoding.UTF8.GetBytes("🤭黑黑黑"),"123");
 
 
 
@@ -14,4 +14,4 @@ var pointer = provider.Search("114").First().file_pointer;
 
 var file_ = provider.GetFile(pointer);
 
-Console.WriteLine(Encoding.UTF8.GetString(file_));
+Console.WriteLine(Encoding.UTF8.GetString(file_.Item1));

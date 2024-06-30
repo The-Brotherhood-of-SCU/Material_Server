@@ -57,5 +57,5 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 
 
 ### /user/[uploader]/files
-返回一个列表，包含了这个用户上传的文件对应的文件详情(返回类型与/search相同)
+返回一个列表，包含了这个用户上传的文件对应的文件详情(返回类型与  /search  相同)
 

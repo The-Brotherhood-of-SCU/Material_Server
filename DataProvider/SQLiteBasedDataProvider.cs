@@ -103,7 +103,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
     public IEnumerable<FileDetails> GetFileDetailsByUploader(string uploader)
     {
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.Uploader}==@{Str.Uploader}";
-        var command=BuildSQL(sql).Add($"@{uploader}",uploader);
+        var command=BuildSQL(sql).Add($"@{Str.Uploader}",uploader);
         var reader=ReadLine(command);
         while (reader.Read())
         {
@@ -163,7 +163,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
                 $"{File_Blob} BLOB ," +
                 $"{Details} TEXT DEFAULT ''," +
                 $"{Total_Rating} REAL DEFAULT 0.0," +
-                $"{Rating_Number} INTEGER DEFAULT 0 " +
+                $"{Rating_Number} INTEGER DEFAULT 0, " +
                 $"{Uploader} TEXT DEFAULT 'unknown'" +
             $")";
     }

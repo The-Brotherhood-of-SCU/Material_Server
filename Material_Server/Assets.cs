@@ -3,5 +3,9 @@ using DataProvider;
 
 public class Assets
 {
-    public static SQLiteBasedDataProvider DataProvider { get;private set; }=new SQLiteBasedDataProvider();
+    public static void Init()
+    {
+        DataProvider = new SQLiteBasedDataProvider();
+    }
+    public static SQLiteBasedDataProvider DataProvider { get;private set; }
 }

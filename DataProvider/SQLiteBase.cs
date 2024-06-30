@@ -35,18 +35,18 @@ public class SQLiteDataProvider
     {
 
     }
-    protected Task ExecuteSQL(string sql)
+    protected void ExecuteSQL(string sql)
     {
         var command = new SQLiteCommand(sql, dbConn);
-        return ExecuteSQL(command);
+        ExecuteSQL(command);
 
 
     }
-    protected async Task ExecuteSQL(SQLiteCommand command)
+    protected void ExecuteSQL(SQLiteCommand command)
     {
         try
         {
-            await command.ExecuteNonQueryAsync();
+            command.ExecuteNonQuery();
         }
         catch (Exception e)
         {
@@ -54,8 +54,8 @@ public class SQLiteDataProvider
         }
 
     }
-    protected Task ExecuteSQL(_builder builder) {
-        return ExecuteSQL(builder.Command);
+    protected void ExecuteSQL(_builder builder) {
+        ExecuteSQL(builder.Command);
     }
     protected SQLiteDataReader ReadLine(string sql)
     {

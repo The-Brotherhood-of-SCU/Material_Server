@@ -4,8 +4,13 @@ import time
 
 base_url="http://127.0.0.1:5000"
 
-# test file upload
+user="sb"
 
+def line(s):
+    print ("-------------------",s,"-------------------")
+
+# test file upload
+line("FILE UPLOADING")
 # 设置要上传的文件路径和表单数据
 file_path = "README.md"  # 请替换为你要上传的文件路径
 file_name = "web api"  # 如果file_name在表单中是必需的
@@ -13,6 +18,7 @@ form_data = {
     "kcm": "value1",
     "kch": "value2",
     "details": "value3",
+    "uploader":user,
     "file_name": file_name  # 这里的file_name应该与实际文件名一致
 }
 # 打开文件
@@ -33,18 +39,25 @@ else:
 time.sleep(1)
 # Test search
 
+line("SEARCHING")
 reponse=requests.get(base_url+"/search/api")
 l=json.loads(reponse.content)
 entry=l[0]
 print("Get the json",entry)
 
 # Test rate
-
+line("RATING")
 requests.post(base_url+"/rate?file_pointer="+str(entry["file_pointer"])+"&rating=5")
 
-
+# Test User
+line("USER")
+url=base_url+"/user/"+user+"/files"
+r=requests.get(url)
+print(r.content)
 # Test Get
+line("DOWNLOAD")
+
 response=requests.get(base_url+"/get_file/"+str(entry["file_pointer"]))
 
-print(response.text)
+#print(response.text)
 

@@ -1,3 +1,7 @@
+using Material_Server;
+
+Assets.Init();
+
 var builder = WebApplication.CreateBuilder(args);
 
 

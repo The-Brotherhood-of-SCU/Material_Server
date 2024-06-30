@@ -18,7 +18,7 @@ public class ServerController : ControllerBase
         return result;
     }
 
-    [HttpGet("user/{account}/files")]
+    [HttpGet("user/{account}/files/")]
     public IEnumerable<FileDetails>? GetFilesByUploader(string account)
     {
         var result = Assets.DataProvider.GetFileDetailsByUploader(account);
