@@ -15,13 +15,13 @@ public interface DataProvider
 
 public record FileDetails
 {
-    public string kcm;
-    public string kch;
-    public string file_name;
-    public string details;
-    public float rating;
-    public long rating_number;
-    public int file_size;
-    public long file_pointer;
-    public long upload_time;
+    public string kcm { get; set; }
+    public string kch { get; set; }
+    public string file_name { get; set; }
+    public string details { get; set; }
+    public float rating { get; set; }
+    public long rating_number { get; set; }
+    public int file_size { get; set; }
+    public long file_pointer { get; set; }
+    public long upload_time { get; set; }
 }

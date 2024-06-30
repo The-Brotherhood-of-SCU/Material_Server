@@ -32,7 +32,6 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             .Add($"@{Str.File_Pointer}",filePointer)
             ;
         ExecuteSQL(command2);
-        throw new NotImplementedException();
     }
     /// <summary>
     /// 返回找到的50个
@@ -64,15 +63,16 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             detail.kcm = (string)reader[Str.Kcm];
             detail.kch = (string)reader[Str.Kch];
             detail.upload_time = (long)reader[Str.Timestamp];
-            if ((int)reader[Str.Rating_Number]==0)
+            var rating_number = (long)reader[Str.Rating_Number];
+            if (rating_number == 0)
             {
                 detail.rating = -1;
             }
             else
             {
-                detail.rating = ((float)reader[Str.Total_Rating] / (int)reader[Str.Rating_Number]);
+                detail.rating = (float)((double)reader[Str.Total_Rating] / rating_number);
             }
-            detail.rating_number = (int)reader[Str.Rating_Number];
+            detail.rating_number = (long)reader[Str.Rating_Number];
             detail.details=(string)reader[Str.Details];
 
             yield return detail;
@@ -117,7 +117,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         public const string Details = "Details";
         public const string File_Name = "File_Name";
         public const string File_Blob = "File_Bolb";
-        public const string Total_Rating = "Rating";
+        public const string Total_Rating = "Rating_Total";
         public const string Rating_Number = "Rating_Number";
         public const string Timestamp = "Timestamp";
         public const string SQL_Build_File_Table = 
@@ -126,11 +126,11 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
                 $"{File_Name} TEXT ," +
                 $"{Timestamp} INTEGER ," +
                 $"{Kcm} TEXT ," +
-                $"{Kch} TEXT ," +
+                $"{Kch} TEXT DEFAULT ''," +
                 $"{File_Blob} BLOB ," +
-                $"{Details} TEXT," +
-                $"{Total_Rating} REAL " +
-                $"{Rating_Number} INTEGER" +
+                $"{Details} TEXT DEFAULT ''," +
+                $"{Total_Rating} REAL DEFAULT 0.0," +
+                $"{Rating_Number} INTEGER DEFAULT 0" +
             $")";
 
     }

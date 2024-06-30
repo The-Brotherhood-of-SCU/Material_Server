@@ -6,7 +6,7 @@ var provider = new SQLiteBasedDataProvider();
 
 //provider.RemoveAll();
 
-//provider.Upload("english","114514","123",Encoding.UTF8.GetBytes("🤭黑黑黑"));
+provider.Upload("english","114514","123","??",Encoding.UTF8.GetBytes("🤭黑黑黑"));
 
 
 

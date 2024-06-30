@@ -11,9 +11,10 @@ public class ServerController : ControllerBase
 {
 
     [HttpGet("search/{keyword}")]
-    public IResult Search(string keyword)
+    public IEnumerable<FileDetails>? Search(string keyword)
     {
-        return Results.Ok(Assets.DataProvider.Search(keyword));
+        var result = Assets.DataProvider.Search(keyword);
+        return result;
     }
     [HttpGet("get_file/{file_pointer}")]
     public IResult GetFile(long file_pointer)
@@ -22,7 +23,7 @@ public class ServerController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IResult> GetUpload([FromBody] UploadData data)
+    public async Task<IResult> GetUpload([FromForm] UploadData data)
     {
         byte[] file=new byte[data.file.Length];
         var stream=data.file.OpenReadStream();
@@ -32,7 +33,7 @@ public class ServerController : ControllerBase
     }
 
     [HttpPost("rate")]
-    public IResult Rate(long file_pointer,float rating)
+    public IResult Rate([FromQuery]long file_pointer, [FromQuery] float rating)
     {
         Assets.DataProvider.Rate(file_pointer, rating);
         return Results.Ok();

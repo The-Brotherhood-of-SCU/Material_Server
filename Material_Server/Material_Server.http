@@ -1,6 +1,6 @@
 @Material_Server_HostAddress = http://localhost:5000
 
-GET {{Material_Server_HostAddress}}/weatherforecast/
+GET {{Material_Server_HostAddress}}/search/api
 Accept: application/json
 
 ###
