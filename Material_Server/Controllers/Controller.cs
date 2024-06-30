@@ -12,14 +12,14 @@ public class ServerController : ControllerBase
 {
 
     [HttpGet("search/{keyword}")]
-    public IEnumerable<FileDetails>? Search(string keyword)
+    public IEnumerable<FileDetail>? Search(string keyword)
     {
         var result = Assets.DataProvider.Search(keyword);
         return result;
     }
 
     [HttpGet("user/{account}/files/")]
-    public IEnumerable<FileDetails>? GetFilesByUploader(string account)
+    public IEnumerable<FileDetail>? GetFilesByUploader(string account)
     {
         var result = Assets.DataProvider.GetFileDetailsByUploader(account);
         return result;

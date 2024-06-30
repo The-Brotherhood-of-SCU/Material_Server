@@ -12,6 +12,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
 {
     public SQLiteBasedDataProvider() :base("data.db"){ 
         ExecuteSQL(Str.SQL_Build_File_Table);
+        ExecuteSQL(Str2.SQL_Build_Comment_Table);
     }
     public void Rate(long filePointer,float rating)
     {
@@ -39,7 +40,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
     /// </summary>
     /// <param name="keyword"></param>
     /// <returns></returns>
-    public IEnumerable<FileDetails> Search(string keyword)
+    public IEnumerable<FileDetail> Search(string keyword)
     {
         int count = 0;
         const string KEY = "KEY";
@@ -61,9 +62,10 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             count++;
         }
     }
-    private FileDetails GetFileDetailByReader(SQLiteDataReader reader)
+
+    private FileDetail GetFileDetailByReader(SQLiteDataReader reader)
     {
-        var detail = new FileDetails();
+        var detail = new FileDetail();
         detail.file_pointer = (long)reader[Str.File_Pointer];
         detail.file_name = (string)reader[Str.File_Name];
         detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
@@ -83,9 +85,9 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         detail.details = (string)reader[Str.Details];
         return detail;
     }
-    public FileDetails GetDetailsByFilePointer(long filePointer)
+    public FileDetail GetDetailsByFilePointer(long filePointer)
     {
-        var detail = new FileDetails();
+        var detail = new FileDetail();
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
         var command=BuildSQL(sql).Add($"@{Str.File_Pointer}",filePointer);
         var reader=ReadOneLine(command);
@@ -100,7 +102,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             yield return (long)reader[Str.File_Pointer];
         }
     }
-    public IEnumerable<FileDetails> GetFileDetailsByUploader(string uploader)
+    public IEnumerable<FileDetail> GetFileDetailsByUploader(string uploader)
     {
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.Uploader}==@{Str.Uploader}";
         var command=BuildSQL(sql).Add($"@{Str.Uploader}",uploader);
@@ -167,4 +169,36 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
                 $"{Uploader} TEXT DEFAULT 'unknown'" +
             $")";
     }
+    //-----comment
+    internal static class Str2{//for comment
+        public const string Account = "Account";
+        public const string Text = "Text";
+        public const string File_Pointer = "File_Pointer";
+        public const string Comment_Table = "Comment_Table";
+        public const string Timestamp = "Timestamp";
+        public const string Rating = "Rating";
+        public const string SQL_Build_Comment_Table = 
+            $"CREATE TABLE IF NOT EXISTS {Comment_Table}(" +
+                $"{Account} TEXT," +
+                $"{File_Pointer} INTEGER," +
+                $"{Timestamp} TEXT," +
+                $"{Text} TEXT" +
+                $"{Rating} REAL" +
+            $")";
+    }
+    public void Comment(string account,long filePointer,string text,float rating)
+    {
+        var sql = $"INSERT INTO {Str2.Comment_Table} " +
+            $"({Str2.Account},{Str2.File_Pointer},{Str2.Timestamp},{Str2.Text},{Str2.Rating})VALUES" +
+            $"(@{Str2.Account},@{Str2.File_Pointer},@{Str2.Timestamp},@{Str2.Text},@{Str2.Rating})";
+        var command = BuildSQL(sql)
+            .Add($"@{Str2.Account}", account)
+            .Add($"@{Str2.File_Pointer}", filePointer)
+            .Add($"@{Str2.Timestamp}", CurrentTime)
+            .Add($"@{Str2.Text}", text)
+            .Add($"@{Str2.Rating}", rating)
+            ;
+        ExecuteSQL(command);
+    }
+    
 }

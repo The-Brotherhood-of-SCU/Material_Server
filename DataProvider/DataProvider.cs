@@ -8,13 +8,13 @@ public interface DataProvider
     /// </summary>
     /// <param name="keywords"></param>
     /// <returns></returns>
-    public IEnumerable<FileDetails> Search(string keyword);
+    public IEnumerable<FileDetail> Search(string keyword);
     public (byte[],string) GetFile(long filePointer);
     public void Upload(string kcm,string kch,string fileName,string details,byte[] file);
     public void Rate(long filePointer,float rate);
 }
 
-public record FileDetails
+public record FileDetail
 {
     public string kcm { get; set; }
     public string kch { get; set; }

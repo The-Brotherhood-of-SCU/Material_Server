@@ -50,7 +50,7 @@ public class SQLiteDataProvider
         }
         catch (Exception e)
         {
-            throw new DatabaseException("Inner SQL exception");
+            throw new DatabaseException("Server SQL exception");
         }
 
     }
