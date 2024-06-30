@@ -12,22 +12,31 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
     public SQLiteBasedDataProvider() :base("data.db"){ 
         ExecuteSQL(Str.SQL_Build_File_Table);
     }
-
+    /// <summary>
+    /// 返回找到的50个
+    /// </summary>
+    /// <param name="keyword"></param>
+    /// <returns></returns>
     public IEnumerable<FileDetails> Search(string keyword)
     {
+        int count = 0;
         const string KEY = "KEY";
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE " +
-            $"FIND_IN_SET({Str.Kch},@{KEY}) OR" +
-            $"FIND_IN_SET({Str.Kcm},@{KEY}) OR" +
-            $"FIND_IN_SET({Str.File_Name},@{KEY})";
+            $"','||{Str.Kch}||',' like '%'||@{KEY}||'%' OR " +
+            $"','||{Str.Kcm}||',' like '%'||@{KEY}||'%' OR " +
+            $"','||{Str.File_Name}||',' like '%'||@{KEY}||'%'";
 
         var command = BuildSQL(sql).Add($"@{KEY}",keyword);
 
         var reader=ReadLine(command);
         while (reader.Read())
         {
+            if (count == 50)
+            {
+                break;
+            }
             var detail=new FileDetails();
-            detail.file_pointer =(string)reader[Str.File_Pointer];
+            detail.file_pointer =(long)reader[Str.File_Pointer];
             detail.file_name = (string)reader[Str.File_Name];
             detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
             detail.kcm = (string)reader[Str.Kcm];
@@ -35,9 +44,10 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             detail.timestamp = (long)reader[Str.Timestamp];
 
             yield return detail;
+            count++;
         }
     }
-    public byte[] GetFile(string filePointer)
+    public byte[] GetFile(long filePointer)
     {
         var sql = $"SELECT {Str.File_Blob} FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
         var command = BuildSQL(sql).Add($"{Str.File_Pointer}",filePointer);
@@ -59,6 +69,8 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
 
         ExecuteSQL(command);
     }
+
+
     private long CurrentTime {
         get { return (long)(DateTime.Now - ZERO_TIME).TotalSeconds; }
     }
@@ -75,13 +87,13 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
         public const string Timestamp = "Timestamp";
         public const string SQL_Build_File_Table = 
             $"CREATE TABLE IF NOT EXISTS {FILE_Table}(" +
-                $"{File_Pointer} INTEGER  AUTOINCREMENT" +
-                $"{File_Name} TEXT" +
-                $"{Timestamp} INTEGER " +
-                $"{Kcm} TEXT" +
-                $"{Kch} TEXT" +
-                $"{File_Blob} BLOB" +
-                $"{Rating} REAL" +
+                $"{File_Pointer} INTEGER PRIMARY KEY AUTOINCREMENT ," +
+                $"{File_Name} TEXT ," +
+                $"{Timestamp} INTEGER ," +
+                $"{Kcm} TEXT ," +
+                $"{Kch} TEXT ," +
+                $"{File_Blob} BLOB ," +
+                $"{Rating} REAL " +
             $")";
 
     }
