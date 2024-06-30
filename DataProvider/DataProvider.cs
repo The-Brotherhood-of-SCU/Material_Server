@@ -8,7 +8,7 @@ public interface DataProvider
     /// <param name="keywords"></param>
     /// <returns></returns>
     public IEnumerable<FileDetails> Search(string keyword);
-    public byte[] GetFile(long filePointer);
+    public (byte[],string) GetFile(long filePointer);
     public void Upload(string kcm,string kch,string fileName,string details,byte[] file);
     public void Rate(long filePointer,float rate);
 }

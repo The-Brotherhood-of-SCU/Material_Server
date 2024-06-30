@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using DataProvider;
+using System.IO;
 
 namespace Material_Server.Controllers;
 
@@ -17,9 +18,11 @@ public class ServerController : ControllerBase
         return result;
     }
     [HttpGet("get_file/{file_pointer}")]
-    public IResult GetFile(long file_pointer)
+    public FileResult GetFile(long file_pointer)
     {
-        return Results.Ok(Assets.DataProvider.GetFile(file_pointer));
+        var (file,fileName) = Assets.DataProvider.GetFile(file_pointer);
+        
+        return File(file, "text/plain",fileName);
     }
 
     [HttpPost("upload")]

@@ -79,12 +79,12 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider,DataProvider
             count++;
         }
     }
-    public byte[] GetFile(long filePointer)
+    public (byte[], string) GetFile(long filePointer)
     {
-        var sql = $"SELECT {Str.File_Blob} FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
+        var sql = $"SELECT {Str.File_Blob},{Str.File_Name} FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
         var command = BuildSQL(sql).Add($"{Str.File_Pointer}",filePointer);
         var reader=ReadOneLine(command);
-        return (byte[])reader[Str.File_Blob];
+        return ((byte[])reader[Str.File_Blob], (string)reader[Str.File_Name]);
     }
     public void Upload(string kcm, string kch, string fileName, string details, byte[] file)
     {
