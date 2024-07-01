@@ -73,7 +73,7 @@ public class ServerController : ControllerBase
         float grades
         )
     {
-        throw new NotImplementedException();
+        return Assets.DataProvider.GetRecommendation(keyword, grades);
     }
 }
 public class UploadData
