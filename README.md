@@ -45,6 +45,7 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 
 ### /search/[keyword]
 返回格式：json
+
 功能：用关键词搜索，返回一个列表，列表中的类型如下图所示
 ```json
 [
@@ -89,3 +90,10 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 
 ### /comment/[file_pointer]
 获取某个文件对应的全部评论，格式与`/user/[user]/comments`api相同
+
+### /recommend?keyword=...&grades=...
+获取智能推荐，
+
+传入参数：keyword 关键词(string),grades 成绩（0-1之间的浮点数）
+
+传出参数：与`/search`相同

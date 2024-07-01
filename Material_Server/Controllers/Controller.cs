@@ -66,6 +66,15 @@ public class ServerController : ControllerBase
     {
         return Assets.DataProvider.GetCommentsByFilePointer(filePointer);
     }
+    [HttpGet("/recommend")]
+    public IEnumerable<FileDetail> GetRecommendation
+        (
+        string keyword,
+        float grades
+        )
+    {
+        throw new NotImplementedException();
+    }
 }
 public class UploadData
 {
