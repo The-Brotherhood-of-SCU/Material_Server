@@ -112,6 +112,78 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             yield return GetFileDetailByReader(reader);
         }
     }
+    public IEnumerable<FileDetail> GetRecommendation(string keyword, double grade)
+    {
+        // 查询所有文件的SQL语句
+        var sql = $"SELECT * FROM {Str.FILE_Table}";
+        var recommendations = new List<Tuple<FileDetail, double>>(); // 用于存储文件及其相似度的列表
+        var reader = ReadLine(sql);
+
+        // 遍历所有文件
+        while (reader.Read())
+        {
+            var fileDetail = GetFileDetailByReader(reader); // 读取文件详情
+            var similarity = CalculateSimilarity(keyword, fileDetail.file_name); // 计算关键词与文件名的相似度
+            recommendations.Add(Tuple.Create(fileDetail, similarity)); // 将文件及其相似度添加到列表中
+        }
+
+        // 按相似度降序排序
+        recommendations = recommendations.OrderByDescending(r => r.Item2).ToList();
+
+        double threshold; // 相似度阈值
+        if (grade >= 0.8) // 如果成绩较高
+        {
+            threshold = 0.3; // 推荐匹配度较低的资料
+        }
+        else // 如果成绩较低
+        {
+            threshold = 0.6; // 推荐匹配度较高的资料
+        }
+
+        // 返回相似度超过阈值的前五个文件
+        return recommendations
+            .Where(r => r.Item2 >= threshold)
+            .Take(5)
+            .Select(r => r.Item1);
+    }
+
+    // 计算两个字符串的相似度
+    private double CalculateSimilarity(string keyword, string fileName)
+    {
+        int n = keyword.Length;
+        int m = fileName.Length;
+        if (n == 0) return m;
+        if (m == 0) return n;
+
+        int[,] d = new int[n + 1, m + 1];
+
+        for (int i = 0; i <= n; i++)
+        {
+            d[i, 0] = i;
+        }
+
+        for (int j = 0; j <= m; j++)
+        {
+            d[0, j] = j;
+        }
+
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
+            {
+                int cost = (fileName[j - 1] == keyword[i - 1]) ? 0 : 1;
+                d[i, j] = Math.Min(
+                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                    d[i - 1, j - 1] + cost
+                );
+            }
+        }
+
+        int levenshteinDistance = d[n, m];
+        int maxLen = Math.Max(n, m);
+
+        return 1.0 - (double)levenshteinDistance / maxLen;
+    }
     public (byte[], string) GetFile(long filePointer)
     {
         var sql = $"SELECT {Str.File_Blob},{Str.File_Name} FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
