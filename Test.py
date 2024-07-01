@@ -3,6 +3,7 @@ import json
 import time
 
 base_url="http://127.0.0.1:5000"
+base_url="http://124.221.108.135:5000"
 
 user="sb"
 
@@ -80,3 +81,7 @@ line("get comment by user name")
 r=requests.get(base_url+"/user/123/comments")
 print(r.content)
 
+line("get recommendation")
+
+r=requests.get(base_url+"/recommend?keyword=123&grades=0.5")
+print(r.content)
