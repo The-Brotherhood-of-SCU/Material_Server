@@ -14,7 +14,7 @@ def line(s):
 line("FILE UPLOADING")
 # 设置要上传的文件路径和表单数据
 file_path = "README.md"  # 请替换为你要上传的文件路径
-file_name = "web api"  # 如果file_name在表单中是必需的
+file_name = "web api.txt"  # 如果file_name在表单中是必需的
 form_data = {
     "kcm": "value1",
     "kch": "value2",
@@ -36,7 +36,7 @@ else:
     print("状态码：", response.status_code)
     print("响应内容：", response.content)
 
-
+exit()
 time.sleep(1)
 # Test search
 

@@ -44,8 +44,9 @@ public class ServerController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IResult> GetUpload([FromForm] UploadData data)
+    public async Task<IResult> Upload([FromForm] UploadData data)
     {
+        //Console.WriteLine("uploading file");
         byte[] file=new byte[data.file.Length];
         var stream=data.file.OpenReadStream();
         await stream.ReadAsync(file);
@@ -86,8 +87,8 @@ public class ServerController : ControllerBase
 }
 public class UploadData
 {
-    public string kcm { get; set; }
-    public string kch { get; set; }
+    public string? kcm { get; set; }
+    public string? kch { get; set; }
     public string details { get; set; }
     public string file_name { get; set; }
     public string uploader {  get; set; }

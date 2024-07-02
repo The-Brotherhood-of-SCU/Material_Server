@@ -1,4 +1,5 @@
 using Material_Server;
+using Microsoft.AspNetCore.HttpLogging;
 
 Assets.Init();
 
@@ -21,9 +22,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddHttpLogging(o => {
+    o.LoggingFields = HttpLoggingFields.All;
+});
 var app = builder.Build();
 app.UseCors("allow all");
+app.UseHttpLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
