@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpLogging(o => {
-    //o.LoggingFields = HttpLoggingFields.All;
+    o.LoggingFields = HttpLoggingFields.None;
 });
 var app = builder.Build();
 app.UseCors("allow all");

@@ -47,7 +47,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE " +
             $"','||{Str.Kch}||',' like '%'||@{KEY}||'%' OR " +
             $"','||{Str.Kcm}||',' like '%'||@{KEY}||'%' OR " +
-            $"','||{Str.File_Name}||',' like '%'||@{KEY}||'%'"+
+            $"','||{Str.File_Name}||',' like '%'||@{KEY}||'%' OR "+
             $"','||{Str.Details}||',' like '%'||@{KEY}||'%'";
 
         var command = BuildSQL(sql).Add($"@{KEY}",keyword);
