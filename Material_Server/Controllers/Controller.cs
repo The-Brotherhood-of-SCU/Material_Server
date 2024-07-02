@@ -29,7 +29,7 @@ public class ServerController : ControllerBase
         return Assets.DataProvider.GetCommentsByUser(account);
     }
 
-    [HttpGet("file_pointer/{filePointer}")]
+    [HttpGet("file_detail/{filePointer}")]
     public FileDetail GetFileDetailByFilePointer(long filePointer)
     {
         return Assets.DataProvider.GetFileDetailByFilePointer(filePointer);
