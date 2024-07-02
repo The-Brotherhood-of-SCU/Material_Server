@@ -47,7 +47,8 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE " +
             $"','||{Str.Kch}||',' like '%'||@{KEY}||'%' OR " +
             $"','||{Str.Kcm}||',' like '%'||@{KEY}||'%' OR " +
-            $"','||{Str.File_Name}||',' like '%'||@{KEY}||'%'";
+            $"','||{Str.File_Name}||',' like '%'||@{KEY}||'%'"+
+            $"','||{Str.Details}||',' like '%'||@{KEY}||'%'";
 
         var command = BuildSQL(sql).Add($"@{KEY}",keyword);
 
@@ -83,6 +84,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         }
         detail.rating_number = (long)reader[Str.Rating_Number];
         detail.details = (string)reader[Str.Details];
+        detail.uploader=reader[Str.Uploader].ToString();
         return detail;
     }
     public FileDetail GetFileDetailByFilePointer(long filePointer)
