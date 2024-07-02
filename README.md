@@ -99,7 +99,7 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 
 传出参数：与`/search`相同
 
-### file_pointer/{filePointer}
+### file_detail/{filePointer}
 根据这个文件指针返回fileDetail
 
 返回格式与/search中的`列表中的元素类型`相同
