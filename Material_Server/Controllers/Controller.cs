@@ -32,7 +32,7 @@ public class ServerController : ControllerBase
     [HttpGet("file_pointer/{filePointer}")]
     public FileDetail GetFileDetailByFilePointer(long filePointer)
     {
-        return Assets.DataProvider.GetDetailByFilePointer(filePointer);
+        return Assets.DataProvider.GetFileDetailByFilePointer(filePointer);
     }
 
     [HttpGet("file/{file_pointer}")]

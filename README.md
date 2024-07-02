@@ -36,7 +36,8 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
     "account":string,//账号
     "file_pointer":long,//评论的这个文件对应的文件指针
     "text":string,//评论的内容
-    "rating":float//打分，五分制
+    "rating":float,//打分，五分制
+    "file_name":string//对应的文件名
 }
 ```
 评论
@@ -97,3 +98,18 @@ url参数有两个，file_pointer是文件指针（long），rating是打分（5
 传入参数：keyword 关键词(string),grades 成绩（0-1之间的浮点数）
 
 传出参数：与`/search`相同
+
+### file_pointer/{filePointer}
+根据这个文件指针返回fileDetail
+
+返回格式与/search中的`列表中的元素类型`相同
+
+```json
+{
+        "account":string,
+        "file_pointer":long,
+        "timestamp":long,
+        "text":string,
+        "rating":float,
+}
+```

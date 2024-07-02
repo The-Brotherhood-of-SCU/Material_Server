@@ -34,4 +34,5 @@ public record CommentDetail
     public long timestamp {  get; set; }
     public string text {  get; set; }
     public float rating {  set; get; }
+    public string file_name {  set; get; }
 }

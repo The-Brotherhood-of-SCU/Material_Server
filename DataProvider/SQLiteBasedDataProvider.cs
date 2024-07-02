@@ -85,7 +85,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         detail.details = (string)reader[Str.Details];
         return detail;
     }
-    public FileDetail GetDetailByFilePointer(long filePointer)
+    public FileDetail GetFileDetailByFilePointer(long filePointer)
     {
         var detail = new FileDetail();
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
@@ -280,6 +280,12 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         commentDetail.timestamp =(long) reader[Str2.Timestamp];
         commentDetail.file_pointer = (long)reader[Str2.File_Pointer];
         commentDetail.rating=(float)(double)reader[Str2.Rating];
+        try
+        {
+            commentDetail.file_name =GetFileDetailByFilePointer(commentDetail.file_pointer).file_name;
+        }
+        catch (Exception) { }
+        
         return commentDetail;
     }
     public IEnumerable<CommentDetail> GetCommentsByFilePointer(long filePointer)
