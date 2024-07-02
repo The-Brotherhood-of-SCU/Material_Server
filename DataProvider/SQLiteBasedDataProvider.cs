@@ -132,19 +132,9 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         // 按相似度降序排序
         recommendations = recommendations.OrderByDescending(r => r.Item2).ToList();
 
-        double threshold; // 相似度阈值
-        if (grade >= 0.8) // 如果成绩较高
-        {
-            threshold = 0.3; // 推荐匹配度较低的资料
-        }
-        else // 如果成绩较低
-        {
-            threshold = 0.6; // 推荐匹配度较高的资料
-        }
 
         // 返回相似度超过阈值的前五个文件
         return recommendations
-            .Where(r => r.Item2 >= threshold)
             .Take(5)
             .Select(r => r.Item1);
     }
