@@ -69,8 +69,8 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         detail.file_pointer = (long)reader[Str.File_Pointer];
         detail.file_name = (string)reader[Str.File_Name];
         detail.file_size = ((byte[])reader[Str.File_Blob]).Length;
-        detail.kcm = (string)reader[Str.Kcm];
-        detail.kch = (string)reader[Str.Kch];
+        detail.kcm = reader[Str.Kcm].ToString();
+        detail.kch = reader[Str.Kch].ToString();
         detail.upload_time = (long)reader[Str.Timestamp];
         var rating_number = (long)reader[Str.Rating_Number];
         if (rating_number == 0)
