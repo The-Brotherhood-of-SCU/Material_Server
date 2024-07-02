@@ -29,6 +29,12 @@ public class ServerController : ControllerBase
         return Assets.DataProvider.GetCommentsByUser(account);
     }
 
+    [HttpGet("file_pointer/{filePointer}")]
+    public FileDetail GetFileDetailByFilePointer(long filePointer)
+    {
+        return Assets.DataProvider.GetDetailByFilePointer(filePointer);
+    }
+
     [HttpGet("file/{file_pointer}")]
     public FileResult GetFile(long file_pointer)
     {
@@ -53,6 +59,8 @@ public class ServerController : ControllerBase
         Assets.DataProvider.Rate(file_pointer, rating);
         return Results.Ok();
     }
+
+
 
     [HttpPost("comment")]
     public IResult Comment([FromForm] CommentData commentData)

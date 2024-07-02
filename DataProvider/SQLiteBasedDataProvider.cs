@@ -85,7 +85,7 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         detail.details = (string)reader[Str.Details];
         return detail;
     }
-    public FileDetail GetDetailsByFilePointer(long filePointer)
+    public FileDetail GetDetailByFilePointer(long filePointer)
     {
         var detail = new FileDetail();
         var sql = $"SELECT * FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
