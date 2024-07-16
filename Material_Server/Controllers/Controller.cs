@@ -51,7 +51,7 @@ public class ServerController : ControllerBase
         var stream=data.file.OpenReadStream();
         await stream.ReadAsync(file);
         Assets.DataProvider.Upload(data.kcm,data.kch,data.file_name,data.details,file,data.uploader);
-        return Results.Ok();
+        return Results.Ok("上传成功");
     }
 
     [HttpPost("rate")]
