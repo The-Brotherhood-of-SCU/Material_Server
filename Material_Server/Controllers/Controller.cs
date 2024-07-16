@@ -84,6 +84,12 @@ public class ServerController : ControllerBase
     {
         return Assets.DataProvider.GetRecommendation(keyword, grades);
     }
+    [HttpGet("/delete/{filePointer}")]
+    public IResult DeleteFile(long filePointer)
+    {
+        Assets.DataProvider.DeleteFileByFilePointer(filePointer);
+        return Results.Ok();
+    }
 }
 public class UploadData
 {

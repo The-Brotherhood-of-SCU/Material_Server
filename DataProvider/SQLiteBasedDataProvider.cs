@@ -114,6 +114,12 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
             yield return GetFileDetailByReader(reader);
         }
     }
+    public void DeleteFileByFilePointer(long filePointer)
+    {
+        var sql = $"DELETE FROM {Str.FILE_Table} WHERE {Str.File_Pointer}==@{Str.File_Pointer}";
+        var command = BuildSQL(sql).Add($"@{Str.File_Pointer}",filePointer);
+        ExecuteSQL(command);
+    }
     public IEnumerable<FileDetail> GetRecommendation(string keyword, double grade)
     {
         // 查询所有文件的SQL语句
