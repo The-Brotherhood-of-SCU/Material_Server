@@ -126,14 +126,16 @@ public class SQLiteBasedDataProvider : SQLiteDataProvider
         {
             var fileDetail = GetFileDetailByReader(reader); // 读取文件详情
             var similarity = CalculateSimilarity(keyword, fileDetail.file_name); // 计算关键词与文件名的相似度
-            recommendations.Add(Tuple.Create(fileDetail, similarity)); // 将文件及其相似度添加到列表中
+            
+            const double biaozhun = 0.7;//确定加权相似度占比系数，可以更改
+            var weighting_similarity = similarity * biaozhun + grade * (1 - biaozhun);
+            recommendations.Add(Tuple.Create(fileDetail, weighting_similarity)); // 将文件及其加权相似度添加到列表中
         }
 
-        // 按相似度降序排序
+        // 按加权相似度降序排序
         recommendations = recommendations.OrderByDescending(r => r.Item2).ToList();
 
-
-        // 返回相似度超过阈值的前五个文件
+        // 返回加权相似度超过阈值的前五个文件
         return recommendations
             .Take(5)
             .Select(r => r.Item1);
